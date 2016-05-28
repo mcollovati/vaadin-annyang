@@ -35,16 +35,17 @@ The addons is written for Java 8 and was tested only on google chrome.
 
 ## Online demo
 
+TODO
 Try the add-on demo at <url of the online demo>
 
 ## Download release
 
-Official releases of this add-on are available at Vaadin Directory. For Maven instructions, download and reviews, go to http://vaadin.com/addon/v-annyang
+TODO
 
 ## Building and running demo
 
 ```
-git clone <url of the MyComponent repository>
+git clone https://github.com/mcollovati/vaadin-annyang.git
 mvn clean install
 cd demo
 mvn jetty:run
