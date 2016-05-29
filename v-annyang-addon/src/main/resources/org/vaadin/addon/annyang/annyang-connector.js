@@ -7,24 +7,24 @@ window.org_vaadin_addon_annyang_Annyang = function() {
     opts.autoRestart = me.getState().autoRestart;
 
     me.onStateChange = function() {
-        //me.annyang.setLanguage(me.getState().lang);
         opts.autoRestart = me.getState().autoRestart;
     }
     me.onUnregister = function() {
         me.annyang.stop();
         me.annyang.removeCommands();
         me.annyang.removeCallback();
-        delete callbackRegistry;
+        callbackRegistry = null;
     };
     me.onUnsupported = function() {
         me.fireStatusChanged('unsupported');
-        for (callbackName in callbackRegistry) {
-            if (callbackRegistry[callbackName].type == 'unsupported') {
+        for (var callbackName in callbackRegistry) {
+            if (callbackRegistry[callbackName].type === 'unsupported') {
                 callbackRegistry[callbackName].cb();
             }
         }
     };
 
+    /*global annyang*/
     me.annyang = annyang || {
         start: me.onUnsupported,
         abort: emptyFn,
@@ -60,10 +60,12 @@ window.org_vaadin_addon_annyang_Annyang = function() {
     me.debug = me.annyang.debug;
     me.setLanguage = function() {
         me.annyang.setLanguage(me.getState().lang);
-        //if (me.annyang.isListening()) {
-            me.abort();
+        var mustRestart = me.annyang.isListening();
+        console.log("setting language " + me.getState().lang + ". Must restart? " + mustRestart);
+        me.abort();
+        if (mustRestart) {
             me.start();
-        //}
+        };
     };
     me.start = function() {
         me.annyang.start(opts);

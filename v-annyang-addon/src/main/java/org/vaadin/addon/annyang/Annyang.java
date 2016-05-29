@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2016 Marco Collovati (mcollovati@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,7 +26,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.vaadin.addon.annyang.events.AnnyangCallbackType;
-import org.vaadin.addon.annyang.events.AnnyangEvent;
 import org.vaadin.addon.annyang.events.AnnyangEvents;
 import org.vaadin.addon.annyang.events.AnnyangListener;
 import org.vaadin.addon.annyang.shared.AnnyangState;
@@ -113,7 +112,6 @@ public class Annyang extends AbstractJavaScriptExtension {
 
     public static Annyang start(UI ui) {
         Annyang annyang = Annyang.of(ui);
-        //annyang.getState().autostart = true;
         return annyang;
     }
 
@@ -132,22 +130,18 @@ public class Annyang extends AbstractJavaScriptExtension {
 
     public void start() {
         callFunction("start");
-        //getState().status = AnnyangStatus.STARTED;
     }
 
     public void pause() {
         callFunction("pause");
-        //getState().status = AnnyangStatus.PAUSED;
     }
 
     public void stop() {
         callFunction("abort");
-        //getState().status = AnnyangStatus.STOPPED;
     }
 
     public void resume() {
         callFunction("resume");
-        //getState().status = AnnyangStatus.STARTED;
     }
 
     public Annyang withDebug(boolean enableDebug) {

@@ -17,9 +17,6 @@ package org.vaadin.addon.annyang.shared;
 
 import com.vaadin.shared.JavaScriptExtensionState;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 public class AnnyangState extends JavaScriptExtensionState {
 
     public boolean autoRestart = true;
@@ -27,7 +24,6 @@ public class AnnyangState extends JavaScriptExtensionState {
     public AnnyangStatus status = AnnyangStatus.STOPPED;
 
     public String lang = "en-US";
-    // public Map<String, String> commands = new LinkedHashMap<>();
 
     public boolean listening = false;
 

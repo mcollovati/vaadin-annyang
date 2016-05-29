@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2016 Marco Collovati (mcollovati@gmail.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,6 +25,8 @@ import org.vaadin.addon.annyang.Annyang;
 import org.vaadin.addon.annyang.shared.AnnyangStatus;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Optional;
@@ -39,18 +41,20 @@ public interface AnnyangEvents {
 
     static <L extends AnnyangListener> Optional<AnnyangCallbackType> callabackFromListener(L listener) {
         return Arrays.stream(listener.getClass().getAnnotatedInterfaces())
-            .filter(t -> ((Class<?>) t.getType()).isAnnotationPresent(AnnyangCallbackHandler.class))
-            .map(t -> ((Class<?>) t.getType()).getAnnotation(AnnyangCallbackHandler.class))
+            .map(t -> EventsHelper.classFromType(t.getType()))
+            .filter(t -> t.isAnnotationPresent(AnnyangCallbackHandler.class))
+            .map(t -> t.getAnnotation(AnnyangCallbackHandler.class))
             .findFirst()
             .map(AnnyangCallbackHandler::value);
     }
 
+
     static Function<Annyang, AnnyangEvent> eventMapper(Annyang.Callback callback, JsonArray arguments) {
-        return EventMapper.createEvent(callback.getCallbackType(), arguments);
+        return EventsHelper.createEvent(callback.getCallbackType(), arguments);
     }
 
     static String[] toStringArray(JsonArray array) {
-        return EventMapper.toStringArray(array);
+        return EventsHelper.toStringArray(array);
     }
 
 
@@ -166,7 +170,7 @@ public interface AnnyangEvents {
         private final String commandName;
         private final String phrase;
 
-        ResultMatchedEvent(Annyang annyang, String commandName, String phrase, String... phrases) {
+        ResultMatchedEvent(Annyang annyang, String phrase, String commandName, String... phrases) {
             super(annyang, phrases);
             this.commandName = commandName;
             this.phrase = phrase;
@@ -193,7 +197,7 @@ public interface AnnyangEvents {
 
 }
 
-class EventMapper {
+class EventsHelper {
 
     interface EventGenerator extends Function<JsonArray, Function<Annyang, AnnyangEvent>> {
     }
@@ -212,16 +216,23 @@ class EventMapper {
             args.getString(0), args.getString(1), toStringArray(args.getArray(2))));
     }};
 
-    private EventMapper() {
+    private EventsHelper() {
         throw new AssertionError("Must not be instantiated");
     }
 
     static String[] toStringArray(JsonArray array) {
         return IntStream.range(0, array.length())
-            .mapToObj(array::getString).toArray(String[]::new);
+            .mapToObj(i -> array.get(i).asString()).toArray(String[]::new);
     }
 
     static Function<Annyang, AnnyangEvent> createEvent(AnnyangCallbackType callbackType, JsonArray arguments) {
         return mapper.get(callbackType).apply(arguments);
+    }
+
+    static Class<?> classFromType(Type type) {
+        if (type instanceof ParameterizedType) {
+            return classFromType(((ParameterizedType) type).getRawType());
+        }
+        return (Class<?>) type;
     }
 }
