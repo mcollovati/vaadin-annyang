@@ -33,4 +33,18 @@ $darkgreen: darken($green, 30%);
              0px 34px 30px rgba(0,0,0,0.1);
         text-align: center;
 	}
+
 }
+#skitt-ui {
+
+    top: 20px !important;
+    bottom: initial !important;
+    left: initial !important;
+    right: 20px !important;
+
+    &.skitt-ui--hidden {
+        display: none !important;
+    }
+
+}
+

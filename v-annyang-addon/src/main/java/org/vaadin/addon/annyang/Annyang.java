@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2016 Marco Collovati (mcollovati@gmail.com)
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,10 +36,12 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-@JavaScript({"https://cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.js", "annyang-connector.js"})
+@JavaScript({
+    "https://cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.js",
+    "//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/speechkitt.min.js",
+    "annyang-connector.js"
+})
 public class Annyang extends AbstractJavaScriptExtension {
-
-    private Locale locale = Locale.US;
 
     private final KeyMapper<String> commandsMapper = new KeyMapper<String>() {
         @Override
@@ -53,6 +55,7 @@ public class Annyang extends AbstractJavaScriptExtension {
             return String.format("_on_%s_%s", o.getCallbackName(), super.key(o));
         }
     };
+    private Locale locale = Locale.US;
 
     private Annyang(UI ui) {
         super(ui);
@@ -64,6 +67,22 @@ public class Annyang extends AbstractJavaScriptExtension {
                 Annyang.this.fireEvent(event);
             }
         });
+    }
+
+    public static Optional<Annyang> current() {
+        return Optional.ofNullable(UI.getCurrent())
+            .map(Annyang::of);
+    }
+
+    public static Annyang start(UI ui) {
+        Annyang annyang = Annyang.of(ui);
+        return annyang;
+    }
+
+    public static Annyang of(UI ui) {
+        Objects.requireNonNull(ui);
+        return ExtensionUtil.from(ui, Annyang.class)
+            .orElseGet(() -> new Annyang(ui));
     }
 
     public Annyang withLocale(Locale locale) {
@@ -104,24 +123,8 @@ public class Annyang extends AbstractJavaScriptExtension {
         removeListener(AnnyangEvents.StatusChangedEvent.class, listener);
     }
 
-
-    public static Optional<Annyang> current() {
-        return Optional.ofNullable(UI.getCurrent())
-            .map(Annyang::of);
-    }
-
-    public static Annyang start(UI ui) {
-        Annyang annyang = Annyang.of(ui);
-        return annyang;
-    }
-
-    public static Annyang of(UI ui) {
-        Objects.requireNonNull(ui);
-        return ui.getExtensions().stream()
-            .filter(Annyang.class::isInstance)
-            .findFirst()
-            .map(Annyang.class::cast)
-            .orElseGet(() -> new Annyang(ui));
+    public SpeechKITT withSpeechKitt() {
+        return SpeechKITT.of(this);
     }
 
     public AnnyangStatus status() {
