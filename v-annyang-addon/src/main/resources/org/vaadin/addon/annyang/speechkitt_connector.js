@@ -11,7 +11,7 @@ window.org_vaadin_addon_annyang_SpeechKITT = function() {
             if (resource) {
                 SpeechKITT.setStylesheet(me.translateVaadinUri(resource.uRL));
             }
-        }
+        };
         var applyIfPresent = function(property, applier) {
             var value = me.getState()[property];
             if (me.getState().hasOwnProperty(property) && value) {

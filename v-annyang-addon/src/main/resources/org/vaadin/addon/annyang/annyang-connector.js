@@ -79,14 +79,14 @@ window.org_vaadin_addon_annyang_Annyang = function() {
     me.pause = function() {
         me.annyang.pause();
         me.fireStatusChanged("paused");
-    }
+    };
     me.resume = function() {
         me.annyang.resume();
         if (me.annyang.isListening()) {
             me.fireStatusChanged("started");
         }
         //console.log("resume, NO fire status change");
-    }
+    };
     me.addCommand = function(phrase, fn) {
         var cmd = {};
         cmd[phrase] = me[fn];
