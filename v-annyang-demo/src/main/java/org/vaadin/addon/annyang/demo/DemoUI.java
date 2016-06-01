@@ -45,7 +45,7 @@ import java.util.function.Consumer;
 public class DemoUI extends UI {
 
     private Layout buttons;
-    private Label unsupportedLabel = new Label("It looks like your browser doesn't support speech recognition.");
+    private Layout speechKITTToolbar;
     private BeanItemContainer<ResultItem> phrasesContainer = new BeanItemContainer<>(ResultItem.class);
     private Table phrases = new Table("", phrasesContainer);
     private Map<Locale, Consumer<Annyang>> commandsMap = new HashMap<>();
@@ -68,7 +68,6 @@ public class DemoUI extends UI {
 
         initCommandMap();
 
-        unsupportedLabel.setVisible(false);
         phrases.setVisibleColumns("phrase");
         phrases.setSizeFull();
 
@@ -84,12 +83,17 @@ public class DemoUI extends UI {
         SpeechKITT speechKITT = annyang.withSpeechKitt()
             .withSampleCommands("test", "say firstname lastname");
 
-        layout.addComponents(unsupportedLabel);
         layout.addComponent(buttons = buttons(annyang));
-        layout.addComponent(speechKitToolbar(speechKITT));
+        layout.addComponent(speechKITTToolbar = speechKitToolbar(speechKITT));
         layout.addComponents(phrases);
         layout.setExpandRatio(phrases, 1);
         setContent(layout);
+
+        annyang.addStatusChangeListener(event -> {
+            if (event.getNewStatus() == AnnyangStatus.UNSUPPORTED) {
+                unsupported();
+            }
+        });
     }
 
     private HorizontalLayout speechKitToolbar(SpeechKITT speechKITT) {
@@ -187,9 +191,13 @@ public class DemoUI extends UI {
 
     private void unsupported(AnnyangEvents.UnsupportedEvent event) {
         logEvent(event);
+        unsupported();
+    }
+    private void unsupported() {
         buttons.setEnabled(false);
-        unsupportedLabel.setVisible(true);
         phrases.setEnabled(false);
+        speechKITTToolbar.setEnabled(false);
+        Notification.show("Unsupported feature", "It looks like your browser doesn't support speech recognition.", Notification.Type.ERROR_MESSAGE);
     }
 
     private void logResults(AnnyangEvents.ResultEvent event) {

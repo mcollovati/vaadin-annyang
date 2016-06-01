@@ -105,7 +105,10 @@ public class Annyang extends AbstractJavaScriptExtension {
             listener.onEvent(AnnyangEvents.eventMapper(callback, arguments).apply(Annyang.this));
         });
         callFunction("addCallback", callback.callbackType.getCallbackName(), callback.callbackName);
-
+        // Force state change to early fire unsupported events
+        if (callback.callbackType == AnnyangCallbackType.UNSUPPORTED) {
+            markAsDirty();
+        }
         return callback;
     }
 

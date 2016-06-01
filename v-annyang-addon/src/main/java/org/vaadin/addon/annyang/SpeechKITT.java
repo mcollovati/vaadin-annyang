@@ -18,14 +18,12 @@ package org.vaadin.addon.annyang;
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
 import com.vaadin.server.ClassResource;
-import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Resource;
 import org.vaadin.addon.annyang.shared.SpeechKITTState;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.IntStream;
 
 /**
  * Created by marco on 30/05/16.
