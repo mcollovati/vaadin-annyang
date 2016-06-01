@@ -1,3 +1,4 @@
+/*global annyang*/
 window.org_vaadin_addon_annyang_Annyang = function() {
     var me = this;
     var emptyFn = function() {};
@@ -8,7 +9,7 @@ window.org_vaadin_addon_annyang_Annyang = function() {
 
     me.onStateChange = function() {
         opts.autoRestart = me.getState().autoRestart;
-    }
+    };
     me.onUnregister = function() {
         me.annyang.stop();
         me.annyang.removeCommands();
@@ -16,15 +17,14 @@ window.org_vaadin_addon_annyang_Annyang = function() {
         callbackRegistry = null;
     };
     me.onUnsupported = function() {
-        me.fireStatusChanged('unsupported');
+        me.fireStatusChanged("unsupported");
         for (var callbackName in callbackRegistry) {
-            if (callbackRegistry[callbackName].type === 'unsupported') {
+            if (callbackRegistry[callbackName].type === "unsupported") {
                 callbackRegistry[callbackName].cb();
             }
         }
     };
 
-    /*global annyang*/
     me.annyang = annyang || {
         start: me.onUnsupported,
         abort: emptyFn,
@@ -46,16 +46,14 @@ window.org_vaadin_addon_annyang_Annyang = function() {
 
 
 
-    me.annyang.addCallback('start', function() {
+    me.annyang.addCallback("start", function() {
         console.log("start callback, fire status change");
-        me.fireStatusChanged('started');
+        me.fireStatusChanged("started");
     });
-    me.annyang.addCallback('end', function() {
+    me.annyang.addCallback("end", function() {
         console.log("end callback, fire status change");
-        me.fireStatusChanged('stopped');
+        me.fireStatusChanged("stopped");
     });
-
-    //me.annyang.debug(true);
 
     me.debug = me.annyang.debug;
     me.setLanguage = function() {
@@ -74,13 +72,13 @@ window.org_vaadin_addon_annyang_Annyang = function() {
     me.pause = function() {
         me.annyang.pause();
         console.log("pause, fire status change");
-        me.fireStatusChanged('paused');
+        me.fireStatusChanged("paused");
         console.log("pause 2, fire status change");
     }
     me.resume = function() {
         me.annyang.resume();
         if (me.annyang.isListening()) {
-            me.fireStatusChanged('started');
+            me.fireStatusChanged("started");
         }
         console.log("resume, NO fire status change");
     }

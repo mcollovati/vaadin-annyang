@@ -25,6 +25,7 @@ import org.vaadin.addon.annyang.shared.SpeechKITTState;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 /**
  * Created by marco on 30/05/16.
@@ -32,7 +33,7 @@ import java.util.Set;
 @JavaScript({"speechkitt.min.js", "speechkitt_connector.js"})
 public class SpeechKITT extends AbstractJavaScriptExtension {
 
-    private static final String SPEECHKITT_VERSION = "0.3.0";
+    //private static final String SPEECHKITT_VERSION = "0.3.0";
 
     SpeechKITT(Annyang annyang) {
         super(annyang.getUI());
@@ -96,9 +97,10 @@ public class SpeechKITT extends AbstractJavaScriptExtension {
 
     public SpeechKITT withRememberStatusInterval(int minutes) {
         if (minutes < 0) {
-            minutes = 0;
+            getState().rememberStatusInterval = 0;
+        } else {
+            getState().rememberStatusInterval = minutes;
         }
-        getState().rememberStatusInterval = minutes;
         return this;
     }
 
@@ -133,10 +135,12 @@ public class SpeechKITT extends AbstractJavaScriptExtension {
         return (SpeechKITTState) super.getState(markAsDirty);
     }
 
+    /*
     private Resource cdnTheme(FlatTheme theme, String version) {
         return new ExternalResource(String.format("//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/%s/themes/%s.css",
             version, theme.toCssName()));
     }
+    */
     private Resource resourceTheme(FlatTheme theme) {
         return new ClassResource(SpeechKITT.class, String.format("speechkitt-themes/%s.css", theme.toCssName()));
     }
