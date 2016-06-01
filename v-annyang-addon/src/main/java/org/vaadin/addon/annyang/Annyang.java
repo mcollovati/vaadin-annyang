@@ -37,8 +37,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JavaScript({
-    "https://cdnjs.cloudflare.com/ajax/libs/annyang/2.4.0/annyang.js",
-    "//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/speechkitt.min.js",
+    "annyang.min.js",
     "annyang-connector.js"
 })
 public class Annyang extends AbstractJavaScriptExtension {

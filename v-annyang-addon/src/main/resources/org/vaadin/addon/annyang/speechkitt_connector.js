@@ -27,7 +27,6 @@ window.org_vaadin_addon_annyang_SpeechKITT = function() {
         me.hide = SpeechKITT.hide;
 
         SpeechKITT.annyang();
-        SpeechKITT.setStylesheet('//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/themes/flat.css');
         SpeechKITT.vroom();
         if (!me.getState().visible) {
             SpeechKITT.hide();

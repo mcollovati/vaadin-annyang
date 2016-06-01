@@ -17,6 +17,7 @@ package org.vaadin.addon.annyang;
 
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.server.AbstractJavaScriptExtension;
+import com.vaadin.server.ClassResource;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Resource;
 import org.vaadin.addon.annyang.shared.SpeechKITTState;
@@ -28,8 +29,10 @@ import java.util.Set;
 /**
  * Created by marco on 30/05/16.
  */
-@JavaScript({"//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/speechkitt.min.js", "speechkitt_connector.js"})
+@JavaScript({"speechkitt.min.js", "speechkitt_connector.js"})
 public class SpeechKITT extends AbstractJavaScriptExtension {
+
+    private static final String SPEECHKITT_VERSION = "0.3.0";
 
     SpeechKITT(Annyang annyang) {
         super(annyang.getUI());
@@ -37,7 +40,7 @@ public class SpeechKITT extends AbstractJavaScriptExtension {
 
     static SpeechKITT of(Annyang annyang) {
         return ExtensionUtil.from(annyang.getUI(), SpeechKITT.class)
-            .orElse(new SpeechKITT(annyang));
+            .orElse(new SpeechKITT(annyang)).withFlatTheme(FlatTheme.DEFAULT);
     }
 
     public SpeechKITT withStylesheet(Resource css) {
@@ -46,7 +49,8 @@ public class SpeechKITT extends AbstractJavaScriptExtension {
     }
 
     public SpeechKITT withFlatTheme(FlatTheme theme) {
-        return withStylesheet(cdnTheme(theme));
+        //return withStylesheet(cdnTheme(theme, SPEECHKITT_VERSION));
+        return withStylesheet(resourceTheme(theme));
     }
 
     public SpeechKITT hide() {
@@ -129,8 +133,12 @@ public class SpeechKITT extends AbstractJavaScriptExtension {
         return (SpeechKITTState) super.getState(markAsDirty);
     }
 
-    private Resource cdnTheme(FlatTheme theme) {
-        return new ExternalResource(String.format("//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/themes/%s.css", theme.toCssName()));
+    private Resource cdnTheme(FlatTheme theme, String version) {
+        return new ExternalResource(String.format("//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/%s/themes/%s.css",
+            version, theme.toCssName()));
+    }
+    private Resource resourceTheme(FlatTheme theme) {
+        return new ClassResource(SpeechKITT.class, String.format("speechkitt-themes/%s.css", theme.toCssName()));
     }
 
     public enum FlatTheme {

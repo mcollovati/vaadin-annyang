@@ -12963,3 +12963,7 @@ div.v-layout.v-horizontal.v-widget {
 #skitt-ui.skitt-ui--hidden {
 	display: none !important;
 }
+
+#skitt-ui #skitt-listening-text {
+	height: 50px;
+}

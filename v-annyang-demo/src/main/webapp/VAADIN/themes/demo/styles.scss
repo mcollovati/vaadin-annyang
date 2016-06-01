@@ -45,6 +45,8 @@ $darkgreen: darken($green, 30%);
     &.skitt-ui--hidden {
         display: none !important;
     }
-
+    #skitt-listening-text {
+        height: 50px;
+    }
 }
 
