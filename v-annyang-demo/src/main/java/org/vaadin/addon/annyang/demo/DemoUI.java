@@ -3,21 +3,36 @@ package org.vaadin.addon.annyang.demo;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.GeneratedPropertyContainer;
-import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.*;
+import com.vaadin.ui.AbstractSelect;
+import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import org.vaadin.addon.annyang.Annyang;
+import org.vaadin.addon.annyang.SpeechKITT;
 import org.vaadin.addon.annyang.events.AnnyangEvent;
 import org.vaadin.addon.annyang.events.AnnyangEvents;
 import org.vaadin.addon.annyang.shared.AnnyangStatus;
 
 import javax.servlet.annotation.WebServlet;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,20 +44,12 @@ import java.util.function.Consumer;
 @SuppressWarnings("serial")
 public class DemoUI extends UI {
 
-    @WebServlet(value = "/*", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = DemoUI.class)
-    public static class Servlet extends VaadinServlet {
-    }
-
     private Layout buttons;
     private Label unsupportedLabel = new Label("It looks like your browser doesn't support speech recognition.");
     private BeanItemContainer<ResultItem> phrasesContainer = new BeanItemContainer<>(ResultItem.class);
     private Table phrases = new Table("", phrasesContainer);
-
-
     private Map<Locale, Consumer<Annyang>> commandsMap = new HashMap<>();
     private List<Annyang.Command> commands = new ArrayList<>();
-
 
     private void initCommandMap() {
         commandsMap.clear();
@@ -72,17 +79,53 @@ public class DemoUI extends UI {
 
 
         // Initialize our new UI component
-        final Annyang annyang = Annyang.of(this);
-        annyang.withDebug(true);
-        //component.start();
-        commandsMap.values().forEach(f -> f.accept(annyang) );
-        //component.addCommand("test", uiRunner(() -> Notification.show("Test command")));
+        final Annyang annyang = Annyang.of(this).withDebug(true);
+        commandsMap.values().forEach(f -> f.accept(annyang));
+        SpeechKITT speechKITT = annyang.withSpeechKitt()
+            .withSampleCommands("test", "say firstname lastname");
 
         layout.addComponents(unsupportedLabel);
         layout.addComponent(buttons = buttons(annyang));
+        layout.addComponent(speechKitToolbar(speechKITT));
         layout.addComponents(phrases);
         layout.setExpandRatio(phrases, 1);
         setContent(layout);
+    }
+
+    private HorizontalLayout speechKitToolbar(SpeechKITT speechKITT) {
+        HorizontalLayout layout = new HorizontalLayout();
+        layout.setMargin(true);
+        layout.setSpacing(true);
+        layout.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER);
+
+
+        ComboBox comboBox = new ComboBox("SpeechKITT theme", EnumSet.allOf(SpeechKITT.FlatTheme.class));
+        comboBox.addValueChangeListener(event -> speechKITT.withFlatTheme((SpeechKITT.FlatTheme) comboBox.getValue()));
+        TextField instructions = new TextField("Instructions");
+        instructions.addValueChangeListener(event -> speechKITT.withInstructionsText(instructions.getValue()));
+        TextField toggleLabel = new TextField("Toggle label");
+        toggleLabel.addValueChangeListener(event -> speechKITT.withToggleLabelText(toggleLabel.getValue()));
+        TextField styleSheet = new TextField("Stylesheet URL");
+        styleSheet.addValueChangeListener(event -> speechKITT.withStylesheet(new ExternalResource(styleSheet.getValue())));
+        styleSheet.setNullRepresentation("");
+        styleSheet.setNullSettingAllowed(true);
+        styleSheet.addValidator((Validator) value -> {
+            try {
+                if (value != null && !((String) value).isEmpty())
+                    new URL((String) value);
+            } catch (MalformedURLException e) {
+                throw new Validator.InvalidValueException("Invalid URL: " + e.getMessage());
+            }
+        });
+
+        Button toggleVisibility = new Button(FontAwesome.EYE_SLASH);
+        toggleVisibility.addClickListener(event -> {
+            speechKITT.toggleVisibility();
+            toggleVisibility.setIcon(speechKITT.isVisible() ? FontAwesome.EYE_SLASH : FontAwesome.EYE);
+        });
+        layout.addComponents(toggleVisibility, comboBox, instructions, toggleLabel, styleSheet);
+
+        return layout;
     }
 
     private HorizontalLayout buttons(Annyang annyang) {
@@ -121,7 +164,7 @@ public class DemoUI extends UI {
         Button removeCallbacks = new Button("Remove callbacks", FontAwesome.BALANCE_SCALE);
         removeCallbacks.addClickListener(event -> callbacks.forEach(annyang::removeCallback));
 
-        ComboBox lang = new ComboBox("Choose language", new BeanItemContainer<Locale>(
+        ComboBox lang = new ComboBox("Choose language", new BeanItemContainer<>(
             Locale.class, commandsMap.keySet()));
         lang.setNullSelectionAllowed(false);
         lang.select(Locale.US);
@@ -141,7 +184,6 @@ public class DemoUI extends UI {
 
         return layout;
     }
-
 
     private void unsupported(AnnyangEvents.UnsupportedEvent event) {
         logEvent(event);
@@ -167,5 +209,10 @@ public class DemoUI extends UI {
 
     private void logEvent(AnnyangEvent event) {
         System.out.println("Got event " + event.getClass().getName());
+    }
+
+    @WebServlet(value = "/*", asyncSupported = true)
+    @VaadinServletConfiguration(productionMode = false, ui = DemoUI.class)
+    public static class Servlet extends VaadinServlet {
     }
 }

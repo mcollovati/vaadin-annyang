@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2016 Marco Collovati (mcollovati@gmail.com)
- * <p>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,6 +58,54 @@ public interface AnnyangEvents {
     }
 
 
+    interface StatusChangeListener extends ConnectorEventListener {
+        Method eventMethod = ReflectTools.findMethod(
+            StatusChangeListener.class, "onStatusChanged", StatusChangedEvent.class
+        );
+
+        void onStatusChanged(StatusChangedEvent event);
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.UNSUPPORTED)
+    interface UnsupportedListener extends AnnyangListener<UnsupportedEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.START)
+    interface StartListener extends AnnyangListener<StartEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.END)
+    interface EndListener extends AnnyangListener<EndEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR)
+    interface ErrorListener extends AnnyangListener<ErrorEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR_NETWORK)
+    interface NetworkErrorListener extends AnnyangListener<NetworkErrorEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR_PERMISSION_BLOCKED)
+    interface PermissionBlockedListener extends AnnyangListener<PermissionBlockedEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR_PERMISSION_DENIED)
+    interface PermissionDeniedListener extends AnnyangListener<PermissionDeniedEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.RESULT)
+    interface ResultListener extends AnnyangListener<ResultEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.RESULT_MATCH)
+    interface ResultMatchedListener extends AnnyangListener<ResultMatchedEvent> {
+    }
+
+    @AnnyangCallbackHandler(AnnyangCallbackType.RESULT_NO_MATCH)
+    interface ResultNotMatchedListener extends AnnyangListener<ResultNotMatchedEvent> {
+    }
+
     class StatusChangedEvent extends Component.Event {
         @Getter
         private final AnnyangStatus oldStatus;
@@ -71,22 +119,10 @@ public interface AnnyangEvents {
         }
     }
 
-    interface StatusChangeListener extends ConnectorEventListener {
-        Method eventMethod = ReflectTools.findMethod(
-            StatusChangeListener.class, "onStatusChanged", StatusChangedEvent.class
-        );
-
-        void onStatusChanged(StatusChangedEvent event);
-    }
-
     class UnsupportedEvent extends AnnyangEvent {
         UnsupportedEvent(Annyang source) {
             super(source);
         }
-    }
-
-    @AnnyangCallbackHandler(AnnyangCallbackType.UNSUPPORTED)
-    interface UnsupportedListener extends AnnyangListener<UnsupportedEvent> {
     }
 
     class StartEvent extends AnnyangEvent {
@@ -95,18 +131,10 @@ public interface AnnyangEvents {
         }
     }
 
-    @AnnyangCallbackHandler(AnnyangCallbackType.START)
-    interface StartListener extends AnnyangListener<StartEvent> {
-    }
-
     class EndEvent extends AnnyangEvent {
         EndEvent(Annyang source) {
             super(source);
         }
-    }
-
-    @AnnyangCallbackHandler(AnnyangCallbackType.END)
-    interface EndListener extends AnnyangListener<EndEvent> {
     }
 
     class ErrorEvent extends AnnyangEvent {
@@ -115,18 +143,10 @@ public interface AnnyangEvents {
         }
     }
 
-    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR)
-    interface ErrorListener extends AnnyangListener<ErrorEvent> {
-    }
-
     class NetworkErrorEvent extends AnnyangEvent {
         NetworkErrorEvent(Annyang source) {
             super(source);
         }
-    }
-
-    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR_NETWORK)
-    interface NetworkErrorListener extends AnnyangListener<NetworkErrorEvent> {
     }
 
     class PermissionBlockedEvent extends AnnyangEvent {
@@ -135,18 +155,10 @@ public interface AnnyangEvents {
         }
     }
 
-    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR_PERMISSION_BLOCKED)
-    interface PermissionBlockedListener extends AnnyangListener<PermissionBlockedEvent> {
-    }
-
     class PermissionDeniedEvent extends AnnyangEvent {
         PermissionDeniedEvent(Annyang source) {
             super(source);
         }
-    }
-
-    @AnnyangCallbackHandler(AnnyangCallbackType.ERROR_PERMISSION_DENIED)
-    interface PermissionDeniedListener extends AnnyangListener<PermissionDeniedEvent> {
     }
 
     @Getter
@@ -158,10 +170,6 @@ public interface AnnyangEvents {
             super(annyang);
             this.phrases = phrases;
         }
-    }
-
-    @AnnyangCallbackHandler(AnnyangCallbackType.RESULT)
-    interface ResultListener extends AnnyangListener<ResultEvent> {
     }
 
     @Getter
@@ -177,11 +185,6 @@ public interface AnnyangEvents {
         }
     }
 
-    @AnnyangCallbackHandler(AnnyangCallbackType.RESULT_MATCH)
-    interface ResultMatchedListener extends AnnyangListener<ResultMatchedEvent> {
-    }
-
-
     @Getter
     @ToString(callSuper = true)
     class ResultNotMatchedEvent extends ResultEvent {
@@ -190,17 +193,10 @@ public interface AnnyangEvents {
         }
     }
 
-    @AnnyangCallbackHandler(AnnyangCallbackType.RESULT_NO_MATCH)
-    interface ResultNotMatchedListener extends AnnyangListener<ResultNotMatchedEvent> {
-    }
-
 
 }
 
 class EventsHelper {
-
-    interface EventGenerator extends Function<JsonArray, Function<Annyang, AnnyangEvent>> {
-    }
 
     private static final EnumMap<AnnyangCallbackType, EventGenerator> mapper = new EnumMap<AnnyangCallbackType, EventGenerator>(AnnyangCallbackType.class) {{
         put(AnnyangCallbackType.UNSUPPORTED, args -> AnnyangEvents.UnsupportedEvent::new);
@@ -234,5 +230,8 @@ class EventsHelper {
             return classFromType(((ParameterizedType) type).getRawType());
         }
         return (Class<?>) type;
+    }
+
+    interface EventGenerator extends Function<JsonArray, Function<Annyang, AnnyangEvent>> {
     }
 }
