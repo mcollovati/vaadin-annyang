@@ -65,7 +65,7 @@ window.org_vaadin_addon_annyang_Annyang = function() {
         me.abort();
         if (mustRestart) {
             me.start();
-        };
+        }
     };
     me.start = function() {
         me.annyang.start(opts);
