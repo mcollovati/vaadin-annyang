@@ -159,8 +159,8 @@ public class DemoUI extends UI {
             annyang.addCallback((AnnyangEvents.EndListener) this::logEvent),
             annyang.addCallback((AnnyangEvents.ErrorListener) this::logEvent),
             annyang.addCallback((AnnyangEvents.NetworkErrorListener) this::logEvent),
-            annyang.addCallback((AnnyangEvents.PermissionBlockedListener) this::logEvent),
-            annyang.addCallback((AnnyangEvents.PermissionDeniedListener) this::logEvent),
+            annyang.addCallback((AnnyangEvents.PermissionBlockedListener) this::permissionError),
+            annyang.addCallback((AnnyangEvents.PermissionDeniedListener) this::permissionError),
             annyang.addCallback((AnnyangEvents.ResultNotMatchedListener) this::logResults),
             annyang.addCallback((AnnyangEvents.ResultMatchedListener) this::logMatchedResults)
         );
@@ -213,6 +213,11 @@ public class DemoUI extends UI {
         phrases.setCaptionAsHtml(true);
         phrases.setCaption("<h1>Command " + event.getCommandName() + "<h1><h3>" + event.getPhrase() + "<h3>");
 
+    }
+
+    private void permissionError(AnnyangEvent event) {
+        logEvent(event);
+        Notification.show("Not allowed", "Speech recognition permission are blocked or denied", Notification.Type.WARNING_MESSAGE);
     }
 
     private void logEvent(AnnyangEvent event) {
