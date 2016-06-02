@@ -15,8 +15,12 @@ class MyUI extends UI {
         Annyang.of(this)
             .addCommand("test", params -> Notification.show("You called test command"))
             .addCommand("hide :component", params -> componentsMap.get(params[0]).setVisible(false))
-            .addCallback((AnnyangEvents.UnsupportedListener) this::unsupportedFeature)
-            .start();
+            .addCallback((AnnyangEvents.PermissionBlockedListener) this::showPermissionBlockedNotification)
+            .addStatusChangeListener(event -> {
+                if (event.getNewStatus() == AnnyangStatus.UNSUPPORTED) {
+                    unsupportedFeature();
+                }
+            }).start();
         // other java code
         //...   
    }
@@ -29,9 +33,31 @@ and command invocation; the Vaadin component lets you easily attach server side 
 For more information about command syntax see **annyang!** 
 [Command Object](https://github.com/TalAter/annyang/blob/master/docs/README.md#commands-object) page. 
 
-
 The addons is written for Java 8 and was tested only on google chrome.
 
+### SpeechKITT integration
+
+The addon come with built-in support for [SpeechKITT](https://github.com/TalAter/SpeechKITT), 
+a flexible GUI for interacting with Speech Recognition.
+
+```java
+class MyUI extends UI {
+
+    protected void init(VaadinRequest request) {
+        // other java code
+        //...   
+        
+        Annyang annyang = Annyang.of(this);
+        
+        //....
+        
+        SpeechKITT speechKITT = annyang.withSpeechKitt()
+            .withSampleCommands("test", "search")
+            .withFlatTheme(SpeechKITT.FlatTheme.ORANGE)
+            .withInstructionsText("Try some voice commands");
+
+    }
+```
 
 ## Online demo
 
@@ -63,7 +89,7 @@ To see the demo, navigate to http://localhost:8080/
 This component is developed as a hobby with no public roadmap or any guarantees of upcoming releases. 
 That said, the following features are planned for upcoming releases:
 
-- [Speech KITT](https://github.com/TalAter/SpeechKITT) integration
+- TODO 
 
 
 ## Issue tracking
@@ -82,7 +108,11 @@ Contributions are welcome, but there are no guarantees that they are accepted as
 
 ## License & Author
 
-Add-on is distributed under Apache License 2.0. For license terms, see LICENSE.txt.
+Add-on is distributed under Apache License 2.0. For license terms, see [LICENSE.txt](LICENSE.txt).
+
+[annyang!](https://www.talater.com/annyang/) and [Speech KITT](https://github.com/TalAter/SpeechKITT) 
+ are release under [MIT](http://opensource.org/licenses/MIT) license.
+
 
 # Developer Guide
 
@@ -96,12 +126,13 @@ Here is a simple example on how to try out the add-on component:
             .addCommand("test", params -> Notification.show("You called test command"))
             .addCommand("hide :component", params -> componentsMap.get(params[0]).setVisible(false))
             // add callbacks for various events: unsupported, start, end, error, ...
-            .addCallback((AnnyangEvents.UnsupportedListener) this::unsupportedFeature)
+            .addCallback((AnnyangEvents.StartListener) this::onStart)
             // and finally start speech recognition
             .start()
 ```
 
-For a more comprehensive example, see src/test/java/org/vaadin/addon/annyang/demo/DemoUI.java
+For a more comprehensive example, see src/test/java/org/vaadin/addon/annyang/demo/DemoUI.java 
+in the demo sub module.
 
 ## API
 
