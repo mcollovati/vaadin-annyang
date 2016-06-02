@@ -113,4 +113,4 @@ window.org_vaadin_addon_annyang_Annyang = function() {
         delete callbackRegistry[callbackName];
         delete me[callbackName];
     };
-}
+};

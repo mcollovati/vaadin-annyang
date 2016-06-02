@@ -37,4 +37,4 @@ window.org_vaadin_addon_annyang_SpeechKITT = function() {
 
     }
 
-}
+};
