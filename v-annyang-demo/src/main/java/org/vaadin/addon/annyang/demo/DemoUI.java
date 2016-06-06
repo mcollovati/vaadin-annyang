@@ -14,8 +14,8 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Theme("demo")
-@Title("MyComponent Add-on Demo")
+@Title("Vaadin Voice Dashboard")
 @SuppressWarnings("serial")
 public class DemoUI extends UI {
 
@@ -50,6 +50,10 @@ public class DemoUI extends UI {
     private Table phrases = new Table("", phrasesContainer);
     private Map<Locale, Consumer<Annyang>> commandsMap = new HashMap<>();
     private List<Annyang.Command> commands = new ArrayList<>();
+
+
+
+
 
     private void initCommandMap() {
         commandsMap.clear();
@@ -68,6 +72,7 @@ public class DemoUI extends UI {
 
         initCommandMap();
 
+
         phrases.setVisibleColumns("phrase");
         phrases.setSizeFull();
 
@@ -83,6 +88,7 @@ public class DemoUI extends UI {
         SpeechKITT speechKITT = annyang.withSpeechKitt()
             .withSampleCommands("test", "say firstname lastname");
 
+        layout.addComponent(new Twitter().addTimeline("738372609797173249", 450, 700));
         layout.addComponent(buttons = buttons(annyang));
         layout.addComponent(speechKITTToolbar = speechKitToolbar(speechKITT));
         layout.addComponents(phrases);
@@ -224,7 +230,7 @@ public class DemoUI extends UI {
         System.out.println("Got event " + event.getClass().getName());
     }
 
-    @WebServlet(value = "/*", asyncSupported = true)
+    @WebServlet(value = "/simple/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = DemoUI.class)
     public static class Servlet extends VaadinServlet {
     }

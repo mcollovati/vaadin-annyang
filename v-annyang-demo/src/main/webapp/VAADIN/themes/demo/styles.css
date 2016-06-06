@@ -12937,27 +12937,34 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
-.demo .demoContentLayout {
-	background-color: #d1d1cf;
-	background-image: url(images/radial-gradient.png);
-	background-size: 90%;
-	background-position: center center;
-	background-repeat: no-repeat;
+.demo .valo-menu-title {
+	padding: 16px 19px;
 }
 
-.demo div.v-annyang {
-	color: #40b527;
-	font-size: 50pt;
-	font-weight: bold;
-	text-shadow: 0px 3px 0px #13370c, 0px 14px 10px rgba(0, 0, 0, 0.15), 0px 24px 2px rgba(0, 0, 0, 0.1), 0px 34px 30px rgba(0, 0, 0, 0.1);
+.demo .valo-menu-subtitle {
+	width: 350px !important;
+}
+
+.demo .annyang-status {
+	height: 50px;
+	line-height: 50px;
 	text-align: center;
+	font-weight: bold;
+}
+
+.demo .annyang-status.warning {
+	background-color: #ffcc33;
+	color: #624e12;
+}
+
+.demo .annyang-status.error {
+	background-color: #ed473b;
+	color: #faf3f3;
 }
 
 #skitt-ui {
 	top: 20px !important;
 	bottom: initial !important;
-	left: initial !important;
-	right: 20px !important;
 }
 
 #skitt-ui.skitt-ui--hidden {
