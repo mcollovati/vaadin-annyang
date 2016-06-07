@@ -1,4 +1,4 @@
-package org.vaadin.addon.annyang.demo;
+package org.vaadin.addon.annyang.demo.components;
 
 import com.vaadin.ui.Component;
 

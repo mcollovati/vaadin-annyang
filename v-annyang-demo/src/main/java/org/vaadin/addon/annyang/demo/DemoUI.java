@@ -15,7 +15,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Layout;
-import com.vaadin.ui.Link;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -23,6 +22,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.vaadin.addon.annyang.Annyang;
 import org.vaadin.addon.annyang.SpeechKITT;
+import org.vaadin.addon.annyang.demo.components.TwitterTimeline;
 import org.vaadin.addon.annyang.events.AnnyangEvent;
 import org.vaadin.addon.annyang.events.AnnyangEvents;
 import org.vaadin.addon.annyang.shared.AnnyangStatus;
@@ -88,7 +88,7 @@ public class DemoUI extends UI {
         SpeechKITT speechKITT = annyang.withSpeechKitt()
             .withSampleCommands("test", "say firstname lastname");
 
-        layout.addComponent(new Twitter().addTimeline("738372609797173249", 450, 700));
+        //layout.addComponent(new TwitterTimeline().timeline("738372609797173249", 450, 700));
         layout.addComponent(buttons = buttons(annyang));
         layout.addComponent(speechKITTToolbar = speechKitToolbar(speechKITT));
         layout.addComponents(phrases);

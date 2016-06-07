@@ -17,7 +17,6 @@ $darkgreen: darken($green, 30%);
     .valo-menu-subtitle {
         width: 350px !important;
     }
-
 	.annyang-status {
 	    height: 50px;
 	    line-height: 50px;
@@ -34,6 +33,16 @@ $darkgreen: darken($green, 30%);
             color: valo-font-color($v-error-indicator-color, 0.92);
 	    }
 	}
+
+    .masonry-layout .masonry-item {
+        background-color: #fff;
+        position: relative;
+        margin: 8px 8px 8px 8px;
+        border-radius: 1px;
+        @include box-shadow(0 0 5px rgba(0, 0, 0, 0.2));
+        box-sizing: border-box;
+        width: 320px;
+    }
 }
 #skitt-ui {
 

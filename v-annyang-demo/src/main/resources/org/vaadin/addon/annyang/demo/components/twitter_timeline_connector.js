@@ -1,4 +1,4 @@
-window.org_vaadin_addon_annyang_demo_Twitter = function() {
+window.org_vaadin_addon_annyang_demo_components_TwitterTimeline = function() {
     /*
     if (!window.twttr) {
         window.twttr = (function(d, s, id) {
@@ -20,7 +20,35 @@ window.org_vaadin_addon_annyang_demo_Twitter = function() {
         console.log("Create window.twttr", window.twttr);
     }
     */
+
+    var dataSourceFactory = {
+        generate: function(state) {
+            var config = {
+                sourceType: state.sourceType
+            };
+            this[state.sourceType](config, state)
+            return config;
+        },
+
+        profile: function(config, state) {
+            config.screenName = state.screenName;
+        }
+    };
+
     var me = this;
+    me.onStateChange = function() {
+        var state = me.getState();
+        window.twttr.widgets.createTimeline(dataSourceFactory.generate(state),
+            me.getElement(), {
+            width: state.width,
+            height: state.height
+        });
+
+    };
+    me.addResizeListener(me.getElement(), function(ev) {
+        console.log("================================== resized");
+        me.refresh();
+    });
     me.refresh = function() {
         window.twttr.widgets.load(me.getElement());
     };
