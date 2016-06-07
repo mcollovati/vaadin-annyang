@@ -175,7 +175,7 @@ public class Annyang extends AbstractJavaScriptExtension {
         return command;
     }
 
-    private void trigger(String sentence) {
+    public final void trigger(String sentence) {
         callFunction("trigger", sentence);
     }
 

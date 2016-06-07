@@ -44,6 +44,7 @@ window.org_vaadin_addon_annyang_Annyang = function() {
         isListening: function() {
             return false;
         },
+        trigger: emptyFn,
         setLanguage: emptyFn,
         debug: emptyFn
     };
@@ -87,6 +88,7 @@ window.org_vaadin_addon_annyang_Annyang = function() {
         }
         //console.log("resume, NO fire status change");
     };
+    me.trigger = me.annyang.trigger;
     me.addCommand = function(phrase, fn) {
         var cmd = {};
         cmd[phrase] = me[fn];
